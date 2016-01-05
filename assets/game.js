@@ -37,7 +37,9 @@ var Game = {
       o: null
     }
   },
+  _game: null,
   _curUIMode: null,
+  _randomSeed: 0,
   init: function(){
     console.log("test");
     for (var displayName in this.DISPLAYS){
@@ -50,6 +52,8 @@ var Game = {
     window.addEventListener('keydown', function(evt){game.eventHandler(eventTpe, evt);});
 
     _curUIMode = Game.UIMode.gameStart;
+    this.setRandomSeed((Math.floor(Math.random()*1000000)));
+    this._game = this;
     this.renderAll();
   },
   renderAll: function(){
@@ -84,6 +88,13 @@ var Game = {
     this._curUIMode.enter();
     this.renderAll();
   },
+  getRandomSeed: function(){
+    return this._randomSeed;
+  },
+  setRandomSeed: function(s){
+    this._randomSeed = s;
+    ROT.RNG.setSeed(this._randomSeed);
+  },
   eventHandler: function(eventType, evt){
     console.log(eventType);
     console.dir(evt);
@@ -91,4 +102,8 @@ var Game = {
       this._curUIMode.handleInput(eventType, evt);
     }
   },
+  toJSON: function() {
+    var json = {"_randomSeed":this._randomSeed};
+    return json;
+  }
 };

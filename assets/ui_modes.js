@@ -58,3 +58,30 @@ Game.UIMode.gameWin = {
     console.log("renderOnMain");
   }
 };
+Game.UIMode.gamePersistence = {
+  enter: function(){
+    console.log("enter");
+  },
+  exit: function(){
+    console.log("exit");
+  },
+  handleInput: function(eventType, evt){
+    console.log("handleInput");
+  },
+  render: function(display){
+    console.log("renderOnMain");
+  },
+  restoreGame: function() {
+    var json_state_data = '{"randomSeed":12}';
+    var state_data = JSON.parse(json_state_data);
+    Game.setRandomSeed(state_data.randomSeed);
+    Game.switchUIMode(Game.UIMode.gamePlay);
+  },
+  saveGame: function(json_state_data){
+    Game.switchUIMode(Game.UIMode.gamePlay);
+  },
+  newGame: function() {
+    Game.setRandomSeed(Math.floor(Math.random()*1000000));
+    Game.switchUImode(Game.UIMode.gamePlay);
+  }
+};
