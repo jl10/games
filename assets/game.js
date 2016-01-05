@@ -13,6 +13,9 @@ window.onload = function() {
         document.getElementById('wsrl-main-display').appendChild(   Game.getDisplay('main').getContainer());
         document.getElementById('wsrl-avatar-display').appendChild(   Game.getDisplay('avatar').getContainer());
         document.getElementById('wsrl-message-display').appendChild(   Game.getDisplay('message').getContainer());
+
+        Game.Message.sendMessage("Helloooo");
+        Game.switchUIMode(Game.UIMode.gameStart);
     }
 };
 
@@ -34,6 +37,7 @@ var Game = {
       o: null
     }
   },
+  _curUIMode: null,
   init: function(){
     console.log("test");
     for (var displayName in this.DISPLAYS){
@@ -41,6 +45,11 @@ var Game = {
         this.DISPLAYS[displayName].o = new ROT.Display({width:this.DISPLAYS[displayName].w, height:this.DISPLAYS[displayName].h});
       }
     }
+
+    window.addEventListener('keypress', function(evt){game.eventHandler(eventTpe, evt);});
+    window.addEventListener('keydown', function(evt){game.eventHandler(eventTpe, evt);});
+
+    _curUIMode = Game.UIMode.gameStart;
     this.renderAll();
   },
   renderAll: function(){
@@ -53,18 +62,33 @@ var Game = {
       return this.DISPLAYS[displayName].o;
   },
   renderMain: function(){
-    for (var i = 0; i < 400; i++){
-      this.DISPLAYS.main.o.drawText(2, 5+i, "Woot");
+    if(this._curUIMode !== null && this._curUIMode.hasOwnProperty('renderOnMain')){
+        this._curUIMode.renderOnMain(this.DISPLAYS);
+    } else {
+
     }
   },
   renderMessage: function(){
-    for (var i = 0; i < 400; i++){
-      this.DISPLAYS.message.o.drawText(2, 5+i, "Woot");
-    }
+      Game.Message.renderOn(this.DISPLAYS.message.o);
   },
   renderAvatar: function(){
       for (var i = 0; i < 400; i++){
         this.DISPLAYS.avatar.o.drawText(2, 5+i, "Woot");
       }
+    },
+  switchUIMode: function(newMode){
+    if (this._curUIMode !== null){
+      this._curUIMode.exit();
     }
+    this._curUIMode = newMode;
+    this._curUIMode.enter();
+    this.renderAll();
+  },
+  eventHandler: function(eventType, evt){
+    console.log(eventType);
+    console.dir(evt);
+    if(this._curUIMode !== null && this._curUIMode.hasOwnProperty('handleInput')){
+      this._curUIMode.handleInput(eventType, evt);
+    }
+  },
 };
