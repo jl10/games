@@ -40,6 +40,7 @@ var Game = {
   _game: null,
   _curUIMode: null,
   _randomSeed: 0,
+  _PERSISTANCE_NAMESPACE: 'wsrlgame',
   init: function(){
     console.log("test");
     for (var displayName in this.DISPLAYS){
@@ -48,8 +49,8 @@ var Game = {
       }
     }
 
-    window.addEventListener('keypress', function(evt){game.eventHandler(eventTpe, evt);});
-    window.addEventListener('keydown', function(evt){game.eventHandler(eventTpe, evt);});
+    window.addEventListener('keypress', function(evt){Game.eventHandler('keypress', evt);});
+    window.addEventListener('keydown', function(evt){Game.eventHandler('keydown', evt);});
 
     _curUIMode = Game.UIMode.gameStart;
     this.setRandomSeed((Math.floor(Math.random()*1000000)));
