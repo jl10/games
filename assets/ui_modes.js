@@ -1,5 +1,6 @@
 Game.UIMode = {};
-
+Game.UIMode.DEFAULT_COLOR_FG = '#000';
+Game.UIMode.DEFAULT_COLOR_BG = '#fff';
 Game.UIMode.gameStart = {
   enter: function(){
     console.log("enter start");
@@ -24,6 +25,15 @@ Game.UIMode.gameStart = {
   }
 };
 Game.UIMode.gamePlay = {
+  attr: {
+    _map: null,
+    _mapWidth: 300,
+    _mapHeight: 200,
+    _cameraX: 100,
+    _cameraY: 100,
+    _avatarX: 100,
+    _avatarY: 100
+  },
   enter: function(){
     console.log("enter Play");
     Game.DISPLAYS.main.o.clear();
@@ -37,7 +47,51 @@ Game.UIMode.gamePlay = {
   },
   renderOnMain: function(display){
     console.log("renderOnMain");
-  }
+  },
+  setupPlay: function (restorationData) {
+   var mapTiles = Game.util.init2DArray(this.attr._mapWidth,this.attr._mapHeight,Game.Tile.nullTile);
+   var generator = new ROT.Map.Cellular(this.attr._mapWidth,this.attr._mapHeight);
+   generator.randomize(0.5);
+
+   // repeated cellular automata process
+   var totalIterations = 3;
+   for (var i = 0; i < totalIterations - 1; i++) {
+     generator.create();
+   }
+
+   // run again then update map
+   generator.create(function(x,y,v) {
+     if (v === 1) {
+       mapTiles[x][y] = Game.Tile.floorTile;
+     } else {
+       mapTiles[x][y] = Game.Tile.wallTile;
+     }
+   });
+
+   // create map from the tiles
+   this.attr._map =  new Game.Map(mapTiles);
+
+   // restore anything else if the data is available
+   if (restorationData !== undefined && restorationData.hasOwnProperty(Game.UIMode.gamePlay.JSON_KEY)) {
+     this.fromJSON(restorationData[Game.UIMode.gamePlay.JSON_KEY]);
+   }
+ },
+ toJSON: function() {
+   var json = {};
+   for (var at in this.attr) {
+     if (this.attr.hasOwnProperty(at) && at!='_map') {
+       json[at] = this.attr[at];
+     }
+   }
+   return json;
+ },
+ fromJSON: function (json) {
+   for (var at in this.attr) {
+     if (this.attr.hasOwnProperty(at) && at!='_map') {
+       this.attr[at] = json[at];
+     }
+   }
+ }
 };
 Game.UIMode.gameLose = {
   enter: function(){
@@ -85,6 +139,9 @@ Game.UIMode.gamePersistence = {
     else if (evt.keyCode==76){
       this.restoreGame();
     }
+    else if (evt.keyCode==78){
+      this.newGame();
+    }
   },
   render: function(display){
     console.log("renderOnMain");
@@ -94,7 +151,11 @@ Game.UIMode.gamePersistence = {
       console.log("Restore game");
        var json_state_data = window.localStorage.getItem(Game._PERSISTANCE_NAMESPACE);
        var state_data = JSON.parse(json_state_data);
+
+       //RESTORE VARIABLES
        Game.setRandomSeed(state_data._randomSeed);
+
+
        Game.switchUIMode(Game.UIMode.gamePlay);
        console.log(Game.getRandomSeed());
      }
