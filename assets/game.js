@@ -13,7 +13,6 @@ window.onload = function() {
         document.getElementById('wsrl-main-display').appendChild(   Game.getDisplay('main').getContainer());
         document.getElementById('wsrl-avatar-display').appendChild(   Game.getDisplay('avatar').getContainer());
         document.getElementById('wsrl-message-display').appendChild(   Game.getDisplay('message').getContainer());
-
         Game.Message.sendMessage("Helloooo");
         Game.switchUIMode(Game.UIMode.gameStart);
     }
@@ -68,9 +67,8 @@ var Game = {
   },
   renderMain: function(){
     if(this._curUIMode !== null && this._curUIMode.hasOwnProperty('renderOnMain')){
-        this._curUIMode.renderOnMain(this.DISPLAYS);
+        this._curUIMode.renderOnMain(this.DISPLAYS.main.o);
     } else {
-
     }
   },
   renderMessage: function(){
@@ -78,7 +76,7 @@ var Game = {
   },
   renderAvatar: function(){
       for (var i = 0; i < 400; i++){
-        this.DISPLAYS.avatar.o.drawText(2, 5+i, "Woot");
+        this.DISPLAYS.avatar.o.drawText(2, 5, "Woot");
       }
     },
   switchUIMode: function(newMode){

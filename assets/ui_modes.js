@@ -15,8 +15,7 @@ Game.UIMode.gameStart = {
       Game.switchUIMode(Game.UIMode.gamePersistence);
     }
     else if (evt.keyCode==13){
-      Game.switchUIMode(Game.UIMode.gamePlay);
-
+      Game.UIMode.gamePersistence.newGame();
     }
   },
   renderOnMain: function(display){
@@ -44,8 +43,13 @@ Game.UIMode.gamePlay = {
   },
   handleInput: function(eventType, evt){
     console.log("handleInput");
-  },
+    if (evt.keyCode==80){
+      console.log("Switch to persistence");
+      Game.switchUIMode(Game.UIMode.gamePersistence);
+      }
+    },
   renderOnMain: function(display){
+    this.attr._map.renderOn(display);
     console.log("renderOnMain");
   },
   setupPlay: function (restorationData) {
@@ -70,6 +74,8 @@ Game.UIMode.gamePlay = {
 
    // create map from the tiles
    this.attr._map =  new Game.Map(mapTiles);
+   //this.renderOnMain(Game.DISPLAYS.main.o);
+//   Game.renderMain();
 
    // restore anything else if the data is available
    if (restorationData !== undefined && restorationData.hasOwnProperty(Game.UIMode.gamePlay.JSON_KEY)) {
@@ -126,7 +132,7 @@ Game.UIMode.gamePersistence = {
     console.log("enter persistence");
     Game.DISPLAYS.main.o.clear();
     Game.DISPLAYS.main.o.drawText(2, 2, "GAME PAUSED");
-    Game.DISPLAYS.main.o.drawText(2, 3, "Press S to save, L to load.");
+    Game.DISPLAYS.main.o.drawText(2, 3, "Press S to save, L to load, P to unpause, N for new game.");
   },
   exit: function(){
     console.log("exit");
@@ -141,6 +147,10 @@ Game.UIMode.gamePersistence = {
     }
     else if (evt.keyCode==78){
       this.newGame();
+    }
+    else if (evt.keyCode==80){
+      console.log("Switch to persistence");
+      Game.switchUIMode(Game.UIMode.gamePersistence);
     }
   },
   render: function(display){
@@ -170,7 +180,8 @@ Game.UIMode.gamePersistence = {
   },
   newGame: function() {
     Game.setRandomSeed(Math.floor(Math.random()*1000000));
-    Game.switchUImode(Game.UIMode.gamePlay);
+    Game.UIMode.gamePlay.setupPlay();
+    Game.switchUIMode(Game.UIMode.gamePlay);
   },
   localStorageAvailable: function () { // NOTE: see https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
   	try {
