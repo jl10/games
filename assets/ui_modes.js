@@ -49,7 +49,7 @@ Game.UIMode.gamePlay = {
       }
     },
   renderOnMain: function(display){
-    this.attr._map.renderOn(display);
+    this.attr._map.renderOn(display, this.attr._cameraX, this.attr._cameraY);
     console.log("renderOnMain");
   },
   setupPlay: function (restorationData) {
