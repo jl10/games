@@ -1,26 +1,29 @@
 Game.UIMode = {};
 Game.UIMode.DEFAULT_COLOR_FG = '#000';
 Game.UIMode.DEFAULT_COLOR_BG = '#fff';
+
 Game.UIMode.gameStart = {
   enter: function(){
-    console.log("enter start");
+    console.log("Start: enter");
   },
   exit: function(){
-    console.log("exit");
+    console.log("Start: exit");
   },
   handleInput: function(eventType, evt){
-    console.log("handleInput");
-    if (evt.keyCode==80){
-      console.log("Switch to persistence");
+    console.log("Start: handleInput");
+    if (evt.keyCode==13){
+      console.log("...switch to persistence");
       Game.switchUIMode(Game.UIMode.gamePersistence);
+    } else if (evt.keyCode==76){
+      Game.UIMode.gamePersistence.restoreGame();
     }
-    else if (evt.keyCode==13){
+    else if (evt.keyCode==78){
       Game.UIMode.gamePersistence.newGame();
     }
   },
   renderOnMain: function(display){
     Game.DISPLAYS.main.o.drawText(2, 2, "Game Start!");
-    Game.DISPLAYS.main.o.drawText(2, 3, "Press P to pause, Enter to start.");
+    Game.DISPLAYS.main.o.drawText(2, 3, "N for new game.  L to load.");
   }
 };
 Game.UIMode.gamePlay = {
@@ -30,13 +33,13 @@ Game.UIMode.gamePlay = {
     _mapHeight: 200,
     _cameraX: 100,
     _cameraY: 100,
-    _avatarX: 100,
-    _avatarY: 100
+    _avatar: null
   },
   enter: function(){
     console.log("enter Play");
     Game.DISPLAYS.main.o.clear();
     Game.DISPLAYS.main.o.drawText(2, 2, "YOU ARE PLAYING THE GAME.");
+    Game.renderAll();
   },
   exit: function(){
     console.log("exit");
@@ -46,11 +49,38 @@ Game.UIMode.gamePlay = {
     if (evt.keyCode==80){
       console.log("Switch to persistence");
       Game.switchUIMode(Game.UIMode.gamePersistence);
-      }
-    },
+    }
+  },
   renderOnMain: function(display){
     this.attr._map.renderOn(display, this.attr._cameraX, this.attr._cameraY);
-    console.log("renderOnMain");
+    this.renderAvatar(display);
+    console.log("Play: renderOnMain");
+  },
+  renderAvatar: function (display) {
+    Game.Symbol.AVATAR.draw(display,this.attr._avatar.getX()-this.attr._cameraX+display._options.width/2,
+                                    this.attr._avatar.getY()-this.attr._cameraY+display._options.height/2);
+  },
+  renderAvatarInfo: function (display) {
+    var fg = Game.UIMode.DEFAULT_COLOR_FG;
+    var bg = Game.UIMode.DEFAULT_COLOR_BG;
+    display.drawText(1,2,"avatar x: "+this.attr._avatar.getX(),fg,bg); // DEV
+    display.drawText(1,3,"avatar y: "+this.attr._avatar.getY(),fg,bg); // DEV
+  },
+  moveAvatar: function (dx,dy) {
+    if (this.attr._avatar.tryWalk(this.attr._map,dx,dy)) {
+      this.setCameraToAvatar();
+    }
+  },
+  moveCamera: function (dx,dy) {
+    this.setCamera(this.attr._cameraX + dx,this.attr._cameraY + dy);
+  },
+  setCamera: function (sx,sy) {
+    this.attr._cameraX = Math.min(Math.max(0,sx),this.attr._mapWidth);
+    this.attr._cameraY = Math.min(Math.max(0,sy),this.attr._mapHeight);
+    Game.renderAll();
+  },
+  setCameraToAvatar: function () {
+    this.setCamera(this.attr._avatar.getX(),this.attr._avatar.getY());
   },
   setupPlay: function (restorationData) {
    var mapTiles = Game.util.init2DArray(this.attr._mapWidth,this.attr._mapHeight,Game.Tile.nullTile);
@@ -75,8 +105,19 @@ Game.UIMode.gamePlay = {
    // create map from the tiles
    this.attr._map =  new Game.Map(mapTiles);
    //this.renderOnMain(Game.DISPLAYS.main.o);
-//   Game.renderMain();
+   //   Game.renderMain();
 
+   //create avatar
+   this.attr._avatar = new Game.Entity(Game.EntityTemplates.Avatar);
+
+    // restore anything else if the data is available
+    if (restorationData !== undefined && restorationData.hasOwnProperty(Game.UIMode.gamePlay.JSON_KEY)) {
+      this.fromJSON(restorationData[Game.UIMode.gamePlay.JSON_KEY]);
+    } else {
+      this.attr._avatar.setPos(this.attr._map.getRandomWalkableLocation());
+    }
+
+    this.setCameraToAvatar();
    // restore anything else if the data is available
    if (restorationData !== undefined && restorationData.hasOwnProperty(Game.UIMode.gamePlay.JSON_KEY)) {
      this.fromJSON(restorationData[Game.UIMode.gamePlay.JSON_KEY]);
@@ -97,8 +138,13 @@ Game.UIMode.gamePlay = {
        this.attr[at] = json[at];
      }
    }
+ },
+ moveAvatar: function(xMov, yMov) {
+
+
  }
 };
+
 Game.UIMode.gameLose = {
   enter: function(){
     console.log("enter");
@@ -149,8 +195,8 @@ Game.UIMode.gamePersistence = {
       this.newGame();
     }
     else if (evt.keyCode==80){
-      console.log("Switch to persistence");
-      Game.switchUIMode(Game.UIMode.gamePersistence);
+      console.log("...switch back to play");
+      Game.switchUIMode(Game.UIMode.gamePlay);
     }
   },
   render: function(display){
@@ -164,7 +210,7 @@ Game.UIMode.gamePersistence = {
 
        //RESTORE VARIABLES
        Game.setRandomSeed(state_data._randomSeed);
-
+       Game.UIMode.gamePlay.setupPlay();
 
        Game.switchUIMode(Game.UIMode.gamePlay);
        console.log(Game.getRandomSeed());
