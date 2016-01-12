@@ -21,7 +21,7 @@ Game.Map = function (tilesGrid) {
    return this.attr._tiles[x][y] || Game.Tile.nullTile;
  };
 Game.Map.prototype.renderOn = function (display,camX,camY) {
-  display.clear();
+  console.log("Map renderOn");
   var dispW = display._options.width;
   var dispH = display._options.height;
   var xStart = camX-Math.round(dispW/2);
@@ -53,4 +53,13 @@ Game.Map.prototype.renderOn = function (display,camX,camY) {
 
 Game.Map.prototype.getRandomWalkableLocation = function() {
   return this.getRandomLocation(function(t){ return t.isWalkable(); });
+};
+
+Game.Map.prototype.addEntity = function(ent, pos) {
+  ent.setPos(pos);
+  if (restorationData !== undefined && restorationData.hasOwnProperty(Game.UIMode.gamePlay.JSON_KEY)) {
+    this.fromJSON(restorationData[Game.UIMode.gamePlay.JSON_KEY]);
+  } else {
+    this.attr._avatar.setPos(this.attr._map.getRandomWalkableLocation());
+  }
 };

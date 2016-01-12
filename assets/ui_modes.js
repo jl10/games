@@ -49,14 +49,28 @@ Game.UIMode.gamePlay = {
     if (evt.keyCode==80){
       console.log("Switch to persistence");
       Game.switchUIMode(Game.UIMode.gamePersistence);
+    } else if (evt.keyIdentifier=="Up"){
+      console.log("Move up");
+      this.moveAvatar(0, -1);
+    } else if (evt.keyIdentifier=="Down"){
+      console.log("Move down");
+      this.moveAvatar(0, 1);
+    } else if (evt.keyIdentifier=="Left"){
+      console.log("Move left");
+      this.moveAvatar(-1, 0);
+    } else if (evt.keyIdentifier=="Right"){
+      console.log("Move right");
+      this.moveAvatar(1, 0);
     }
   },
   renderOnMain: function(display){
+    display.clear();
     this.attr._map.renderOn(display, this.attr._cameraX, this.attr._cameraY);
     this.renderAvatar(display);
     console.log("Play: renderOnMain");
   },
   renderAvatar: function (display) {
+    console.log(Game.Symbol.AVATAR.attr._char);
     Game.Symbol.AVATAR.draw(display,this.attr._avatar.getX()-this.attr._cameraX+display._options.width/2,
                                     this.attr._avatar.getY()-this.attr._cameraY+display._options.height/2);
   },
@@ -66,8 +80,10 @@ Game.UIMode.gamePlay = {
     display.drawText(1,2,"avatar x: "+this.attr._avatar.getX(),fg,bg); // DEV
     display.drawText(1,3,"avatar y: "+this.attr._avatar.getY(),fg,bg); // DEV
   },
-  moveAvatar: function (dx,dy) {
+  moveAvatar: function (dx, dy) {
     if (this.attr._avatar.tryWalk(this.attr._map,dx,dy)) {
+      this.attr._avatar.setX(this.attr._avatar.getX()+dx);
+      this.attr._avatar.setY(this.attr._avatar.getY()+dy);
       this.setCameraToAvatar();
     }
   },
@@ -110,6 +126,14 @@ Game.UIMode.gamePlay = {
    //create avatar
    this.attr._avatar = new Game.Entity(Game.EntityTemplates.Avatar);
 
+
+   for (var ecount = 0; ecount < 80; ecount++) {
+     console.log("create moss")
+      var temp_entity = new Game.Entity(Game.EntityTemplates.Monster);
+      temp_entity.setPos(this.attr._map.getRandomWalkableLocation());
+  }
+
+
     // restore anything else if the data is available
     if (restorationData !== undefined && restorationData.hasOwnProperty(Game.UIMode.gamePlay.JSON_KEY)) {
       this.fromJSON(restorationData[Game.UIMode.gamePlay.JSON_KEY]);
@@ -118,32 +142,48 @@ Game.UIMode.gamePlay = {
     }
 
     this.setCameraToAvatar();
-   // restore anything else if the data is available
-   if (restorationData !== undefined && restorationData.hasOwnProperty(Game.UIMode.gamePlay.JSON_KEY)) {
-     this.fromJSON(restorationData[Game.UIMode.gamePlay.JSON_KEY]);
-   }
- },
+  },
+
  toJSON: function() {
-   var json = {};
-   for (var at in this.attr) {
-     if (this.attr.hasOwnProperty(at) && at!='_map') {
-       json[at] = this.attr[at];
-     }
-   }
-   return json;
+   return Game.UIMode.gamePersistence.BASE_toJSON.call(this);
  },
  fromJSON: function (json) {
-   for (var at in this.attr) {
-     if (this.attr.hasOwnProperty(at) && at!='_map') {
-       this.attr[at] = json[at];
-     }
-   }
+   Game.UIMode.gamePersistence.BASE_fromJSON.call(this,json);
  },
- moveAvatar: function(xMov, yMov) {
-
-
- }
-};
+ BASE_toJSON: function(state_hash_name) {
+     var state = this.attr;
+     if (state_hash_name) {
+       state = this[state_hash_name];
+     }
+     var json = JSON.stringify(state);
+     /*for (var at in state) {
+       if (state.hasOwnProperty(at)) {
+         if (state[at] instanceof Object && 'toJSON' in state[at]) {
+           json[at] = state[at].toJSON();
+         } else {
+           json[at] = state[at];
+         }
+       }
+     }*/
+     return json;
+   },
+   BASE_fromJSON: function (json,state_hash_name) {
+     var using_state_hash = 'attr';
+     if (state_hash_name) {
+       using_state_hash = state_hash_name;
+     }
+     this[using_state_hash] = JSON.parse(json);
+    /* for (var at in this[using_state_hash]) {
+       if (this[using_state_hash].hasOwnProperty(at)) {
+         if (this[using_state_hash][at] instanceof Object && 'fromJSON' in this[using_state_hash][at]) {
+           this[using_state_hash][at].fromJSON(json[at]);
+         } else {
+           this[using_state_hash][at] = json[at];
+         }
+       }
+     }*/
+   }
+}
 
 Game.UIMode.gameLose = {
   enter: function(){
@@ -210,7 +250,7 @@ Game.UIMode.gamePersistence = {
 
        //RESTORE VARIABLES
        Game.setRandomSeed(state_data._randomSeed);
-       Game.UIMode.gamePlay.setupPlay();
+       Game.UIMode.gamePlay.setupPlay(state_data)
 
        Game.switchUIMode(Game.UIMode.gamePlay);
        console.log(Game.getRandomSeed());

@@ -5,7 +5,15 @@ Game.EntityTemplates = {};
 Game.EntityTemplates.Avatar = {
   name: 'avatar',
   chr:'@',
-  fg:'#dda',
+  fg:'#ddd',
   maxHp: 10,
+  mixins: [Game.EntityMixin.WalkerCorporeal,Game.EntityMixin.HitPoints,Game.EntityMixin.Chronicle]
+};
+
+Game.EntityTemplates.Monster = {
+  name: 'Monster',
+  chr:'$',
+  fg:'#ddd',
+  maxHp: 1,
   mixins: [Game.EntityMixin.WalkerCorporeal,Game.EntityMixin.HitPoints,Game.EntityMixin.Chronicle]
 };
