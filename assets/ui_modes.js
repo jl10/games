@@ -33,7 +33,9 @@ Game.UIMode.gamePlay = {
     _mapHeight: 200,
     _cameraX: 100,
     _cameraY: 100,
-    _avatar: null
+    _avatar: null,
+    _numEnts: 200,
+    _entities: [],
   },
   enter: function(){
     console.log("enter Play");
@@ -66,19 +68,16 @@ Game.UIMode.gamePlay = {
   renderOnMain: function(display){
     display.clear();
     this.attr._map.renderOn(display, this.attr._cameraX, this.attr._cameraY);
-    this.renderAvatar(display);
+    this.renderEntities(display);
     console.log("Play: renderOnMain");
   },
-  renderAvatar: function (display) {
-    console.log(Game.Symbol.AVATAR.attr._char);
+  renderEntities: function (display) {
     Game.Symbol.AVATAR.draw(display,this.attr._avatar.getX()-this.attr._cameraX+display._options.width/2,
                                     this.attr._avatar.getY()-this.attr._cameraY+display._options.height/2);
-  },
-  renderAvatarInfo: function (display) {
-    var fg = Game.UIMode.DEFAULT_COLOR_FG;
-    var bg = Game.UIMode.DEFAULT_COLOR_BG;
-    display.drawText(1,2,"avatar x: "+this.attr._avatar.getX(),fg,bg); // DEV
-    display.drawText(1,3,"avatar y: "+this.attr._avatar.getY(),fg,bg); // DEV
+    for (var i = 0; i < this.attr._numEnts; i++){
+      this.attr._entities[i].draw(display, this.attr._entities[i].getX()-this.attr._cameraX+display._options.width/2,
+                                      this.attr._entities[i].getY()-this.attr._cameraY+display._options.height/2);
+    }
   },
   moveAvatar: function (dx, dy) {
     if (this.attr._avatar.tryWalk(this.attr._map,dx,dy)) {
@@ -127,10 +126,10 @@ Game.UIMode.gamePlay = {
    this.attr._avatar = new Game.Entity(Game.EntityTemplates.Avatar);
 
 
-   for (var ecount = 0; ecount < 80; ecount++) {
-     console.log("create moss")
+   for (var ecount = 0; ecount < this.attr._numEnts; ecount++) {
       var temp_entity = new Game.Entity(Game.EntityTemplates.Monster);
       temp_entity.setPos(this.attr._map.getRandomWalkableLocation());
+      this.attr._entities[this.attr._entities.length] = temp_entity;
   }
 
 

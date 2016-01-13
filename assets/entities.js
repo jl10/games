@@ -12,8 +12,8 @@ Game.EntityTemplates.Avatar = {
 
 Game.EntityTemplates.Monster = {
   name: 'Monster',
-  chr:'$',
-  fg:'#ddd',
+  chr:'#',
+  fg:'#060',
   maxHp: 1,
   mixins: [Game.EntityMixin.WalkerCorporeal,Game.EntityMixin.HitPoints,Game.EntityMixin.Chronicle]
 };

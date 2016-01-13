@@ -15,6 +15,11 @@ Game.EntityMixin.WalkerCorporeal = {
       if (this.hasMixin('Chronicle')) { // NOTE: this is sub-optimal because it couple this mixin to the Chronicle one (i.e. this needs to know the Chronicle function to call) - the event system will solve this issue
         this.trackTurn();
       }
+      for (var i = 0; i < Game.UIMode.gamePlay.attr._numEnts; i++){
+        if (targetX == Game.UIMode.gamePlay.attr._entities[i].getX() && targetY == Game.UIMode.gamePlay.attr._entities[i].getY()){
+            return false;
+        }
+      }
       return true;
     }
     return false;
