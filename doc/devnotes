@@ -1,0 +1,9 @@
+ideas:
+
+modular music, adapts to gameplay
+
+Monster AI that adapts to state of player, environment (behave differently in groups)
+
+Incorporate stealth; monsters wont react if you move slowly.  Some timer to track time since last move
+
+Levels;  after all or most moss of one level has been killed, spawn more harder moss.  Levels: normal moss, moss that runs away from you, moss that attacks you, and boss moss.

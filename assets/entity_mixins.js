@@ -11,18 +11,25 @@ Game.EntityMixin.WalkerCorporeal = {
     var targetX = Math.min(Math.max(0,this.getX() + dx),map.getWidth());
     var targetY = Math.min(Math.max(0,this.getY() + dy),map.getHeight());
     if (map.getTile(targetX,targetY).isWalkable()) {
-      //this.setPos(targetX,targetY);
       if (this.hasMixin('Chronicle')) { // NOTE: this is sub-optimal because it couple this mixin to the Chronicle one (i.e. this needs to know the Chronicle function to call) - the event system will solve this issue
         this.trackTurn();
       }
-      for (var i = 0; i < Game.UIMode.gamePlay.attr._numEnts; i++){
-        if (targetX == Game.UIMode.gamePlay.attr._entities[i].getX() && targetY == Game.UIMode.gamePlay.attr._entities[i].getY()){
-            return false;
+      for (var entID in Game.ALL_ENTITIES){
+        if (targetX == Game.ALL_ENTITIES[entID].getX() && targetY == Game.ALL_ENTITIES[entID].getY()){
+            this.combat(entID);
+            Game.DISPLAYS.message.o.drawText(0, 0, "You hit the moss.");
+            return false; //entity in the way
         }
       }
-      return true;
+      return true; //walkable tile, no entities in the way
     }
-    return false;
+    return false; //not walkable tile
+  },
+  combat: function(entID){
+    console.log("ENT ID:  " + entID);
+    var avatarAttack = 1;
+    Game.ALL_ENTITIES[entID].takeHits(avatarAttack);
+    Game.DISPLAYS.message.o.drawText(0, 0, "You hit the moss.");
   }
 };
 
@@ -74,6 +81,9 @@ Game.EntityMixin.HitPoints = {
   },
   takeHits: function (amt) {
     this.attr._HitPoints_attr.curHp -= amt;
+    if(this.getCurHp() <= 0){
+      delete Game.ALL_ENTITIES[this._entityID];
+    }
   },
   recoverHits: function (amt) {
     this.attr._HitPoints_attr.curHp = Math.min(this.attr._HitPoints_attr.curHp+amt,this.attr._HitPoints_attr.maxHp);

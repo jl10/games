@@ -93,9 +93,7 @@ var Game = {
     ROT.RNG.setSeed(this._randomSeed);
   },
   eventHandler: function(eventType, evt){
-    console.log(eventType);
-    console.dir(evt);
-    if(this._curUIMode !== null && this._curUIMode.hasOwnProperty('handleInput')){
+      if(this._curUIMode !== null && this._curUIMode.hasOwnProperty('handleInput')){
       this._curUIMode.handleInput(eventType, evt);
     }
   },

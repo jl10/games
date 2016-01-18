@@ -35,7 +35,6 @@ Game.UIMode.gamePlay = {
     _cameraY: 100,
     _avatar: null,
     _numEnts: 200,
-    _entities: [],
   },
   enter: function(){
     console.log("enter Play");
@@ -50,17 +49,17 @@ Game.UIMode.gamePlay = {
     console.log("handleInput");
     if (evt.keyCode==80){
       console.log("Switch to persistence");
-      Game.switchUIMode(Game.UIMode.gamePersistence);
-    } else if (evt.keyIdentifier=="Up"){
+      Game.switchUIMode(Game. xUIMode.gamePersistence);
+    } else if (evt.keyCode==38){
       console.log("Move up");
       this.moveAvatar(0, -1);
-    } else if (evt.keyIdentifier=="Down"){
+    } else if (evt.keyCode==40){
       console.log("Move down");
       this.moveAvatar(0, 1);
-    } else if (evt.keyIdentifier=="Left"){
+    } else if (evt.keyCode==37){
       console.log("Move left");
       this.moveAvatar(-1, 0);
-    } else if (evt.keyIdentifier=="Right"){
+    } else if (evt.keyCode==39){
       console.log("Move right");
       this.moveAvatar(1, 0);
     }
@@ -74,9 +73,9 @@ Game.UIMode.gamePlay = {
   renderEntities: function (display) {
     Game.Symbol.AVATAR.draw(display,this.attr._avatar.getX()-this.attr._cameraX+display._options.width/2,
                                     this.attr._avatar.getY()-this.attr._cameraY+display._options.height/2);
-    for (var i = 0; i < this.attr._numEnts; i++){
-      this.attr._entities[i].draw(display, this.attr._entities[i].getX()-this.attr._cameraX+display._options.width/2,
-                                      this.attr._entities[i].getY()-this.attr._cameraY+display._options.height/2);
+    for (entID in Game.ALL_ENTITIES){
+      Game.ALL_ENTITIES[entID].draw(display, Game.ALL_ENTITIES[entID].getX()-this.attr._cameraX+display._options.width/2,
+                                      Game.ALL_ENTITIES[entID].getY()-this.attr._cameraY+display._options.height/2);
     }
   },
   moveAvatar: function (dx, dy) {
@@ -85,6 +84,11 @@ Game.UIMode.gamePlay = {
       this.attr._avatar.setY(this.attr._avatar.getY()+dy);
       this.setCameraToAvatar();
     }
+    this.moveEntities();
+  },
+  moveEntities: function(){
+
+    Game.renderAll();
   },
   moveCamera: function (dx,dy) {
     this.setCamera(this.attr._cameraX + dx,this.attr._cameraY + dy);
@@ -125,19 +129,16 @@ Game.UIMode.gamePlay = {
    //create avatar
    this.attr._avatar = new Game.Entity(Game.EntityTemplates.Avatar);
 
-
-   for (var ecount = 0; ecount < this.attr._numEnts; ecount++) {
-      var temp_entity = new Game.Entity(Game.EntityTemplates.Monster);
-      temp_entity.setPos(this.attr._map.getRandomWalkableLocation());
-      this.attr._entities[this.attr._entities.length] = temp_entity;
-  }
-
-
     // restore anything else if the data is available
     if (restorationData !== undefined && restorationData.hasOwnProperty(Game.UIMode.gamePlay.JSON_KEY)) {
       this.fromJSON(restorationData[Game.UIMode.gamePlay.JSON_KEY]);
+      //RESTORE POSITIONS
     } else {
       this.attr._avatar.setPos(this.attr._map.getRandomWalkableLocation());
+      for (var ecount = 0; ecount < this.attr._numEnts; ecount++) {
+         var temp_entity = new Game.Entity(Game.EntityTemplates.Monster);
+         temp_entity.setPos(this.attr._map.getRandomWalkableLocation());
+     }
     }
 
     this.setCameraToAvatar();

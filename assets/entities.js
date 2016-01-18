@@ -6,7 +6,7 @@ Game.EntityTemplates.Avatar = {
   name: 'avatar',
   chr:'@',
   fg:'#ddd',
-  maxHp: 10,
+  maxHp: 100,
   mixins: [Game.EntityMixin.WalkerCorporeal,Game.EntityMixin.HitPoints,Game.EntityMixin.Chronicle]
 };
 
