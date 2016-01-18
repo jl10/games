@@ -1,0 +1,17 @@
+Moss Fighter 2016
+
+Simple modular music, adapts to gameplay
+
+Different data stucture for storing entities
+
+Different AI that adapt to state of player, environment (ideas from Chris:  behaving differently in groups, different player health, different monster health, run away vs. attack, attack slowly)
+
+Incorporate stealth (from games like Assasin's Creed, Splinter Cell, Skyrim); monsters won't react if you move very slowly around them.  Problem:  representing which direction they're facing?
+Also, certain terrains could be harder to move around in.
+Multiple-symbol entities:  multiple entities sharing state, moving in unison?
+
+Some vehicle you can find, mount, and travel twice as fast (but obviously easier to run into things, harder to turn)
+
+Real life map geolocation
+
+Geolocation for movement
