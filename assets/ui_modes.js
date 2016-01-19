@@ -50,6 +50,7 @@ Game.UIMode.gamePlay = {
     if (evt.keyCode==80){
       console.log("Switch to persistence");
       Game.switchUIMode(Game.UIMode.gamePersistence);
+      Game.Message.pushMessage("Woppdedoo");
     } else if (evt.keyCode==38){
       console.log("Move up");
       this.moveAvatar(0, -1);
@@ -73,7 +74,7 @@ Game.UIMode.gamePlay = {
   renderEntities: function (display) {
     Game.Symbol.AVATAR.draw(display,this.attr._avatar.getX()-this.attr._cameraX+display._options.width/2,
                                     this.attr._avatar.getY()-this.attr._cameraY+display._options.height/2);
-    for (entID in Game.ALL_ENTITIES){
+    for (var entID in Game.ALL_ENTITIES){
       Game.ALL_ENTITIES[entID].draw(display, Game.ALL_ENTITIES[entID].getX()-this.attr._cameraX+display._options.width/2,
                                       Game.ALL_ENTITIES[entID].getY()-this.attr._cameraY+display._options.height/2);
     }
@@ -133,7 +134,9 @@ Game.UIMode.gamePlay = {
     if (restorationData !== undefined && restorationData.hasOwnProperty(Game.UIMode.gamePlay.JSON_KEY)) {
       this.fromJSON(restorationData[Game.UIMode.gamePlay.JSON_KEY]);
       //RESTORE POSITIONS
+      console.log("LOAD STUFF");
     } else {
+      console.log("DONT LOAD STUFF");
       this.attr._avatar.setPos(this.attr._map.getRandomWalkableLocation());
       for (var ecount = 0; ecount < this.attr._numEnts; ecount++) {
          var temp_entity = new Game.Entity(Game.EntityTemplates.Monster);
@@ -150,40 +153,8 @@ Game.UIMode.gamePlay = {
  fromJSON: function (json) {
    Game.UIMode.gamePersistence.BASE_fromJSON.call(this,json);
  },
- BASE_toJSON: function(state_hash_name) {
-     var state = this.attr;
-     if (state_hash_name) {
-       state = this[state_hash_name];
-     }
-     var json = JSON.stringify(state);
-     /*for (var at in state) {
-       if (state.hasOwnProperty(at)) {
-         if (state[at] instanceof Object && 'toJSON' in state[at]) {
-           json[at] = state[at].toJSON();
-         } else {
-           json[at] = state[at];
-         }
-       }
-     }*/
-     return json;
-   },
-   BASE_fromJSON: function (json,state_hash_name) {
-     var using_state_hash = 'attr';
-     if (state_hash_name) {
-       using_state_hash = state_hash_name;
-     }
-     this[using_state_hash] = JSON.parse(json);
-    /* for (var at in this[using_state_hash]) {
-       if (this[using_state_hash].hasOwnProperty(at)) {
-         if (this[using_state_hash][at] instanceof Object && 'fromJSON' in this[using_state_hash][at]) {
-           this[using_state_hash][at].fromJSON(json[at]);
-         } else {
-           this[using_state_hash][at] = json[at];
-         }
-       }
-     }*/
-   }
-}
+
+};
 
 Game.UIMode.gameLose = {
   enter: function(){
@@ -249,25 +220,33 @@ Game.UIMode.gamePersistence = {
        var state_data = JSON.parse(json_state_data);
 
        //RESTORE VARIABLES
+       //Game._game = state_data;
        Game.setRandomSeed(state_data._randomSeed);
-       Game.UIMode.gamePlay.setupPlay(state_data)
+       Game.ALL_ENTITIES = state_data.ALL_ENTITIES;
+       Game.UIMode.gamePlay.setupPlay(state_data);
+
 
        Game.switchUIMode(Game.UIMode.gamePlay);
-       console.log(Game.getRandomSeed());
      }
   },
   saveGame: function(json_state_data) {
     if (this.localStorageAvailable()) {
     console.log("Save game");
+    //Game.DATASTORE._game = Game._game;
+   //  Game.DATASTORE.ALL_ENTITIES = Game.ALL_ENTITIES;
      window.localStorage.setItem(Game._PERSISTANCE_NAMESPACE, JSON.stringify(Game._game)); // .toJSON()
      Game.DISPLAYS.message.o.drawText(0, 0, "Game saved.");
      console.log(Game.getRandomSeed());
    }
   },
   newGame: function() {
+    Game.UIMode.gamePersistence.clear();
     Game.setRandomSeed(Math.floor(Math.random()*1000000));
     Game.UIMode.gamePlay.setupPlay();
     Game.switchUIMode(Game.UIMode.gamePlay);
+  },
+  clear: function() {
+    Game.ALL_ENTITIES={};
   },
   localStorageAvailable: function () { // NOTE: see https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
   	try {
@@ -280,5 +259,38 @@ Game.UIMode.gamePersistence = {
       Game.Message.send('Sorry, no local data storage is available for this browser');
   		return false;
   	}
-  }
+  },
+  BASE_toJSON: function(state_hash_name) {
+      var state = this.attr;
+      if (state_hash_name) {
+        state = this[state_hash_name];
+      }
+      var json = JSON.stringify(state);
+      for (var at in state) {
+        if (state.hasOwnProperty(at)) {
+          if (state[at] instanceof Object && 'toJSON' in state[at]) {
+            json[at] = state[at].toJSON();
+          } else {
+            json[at] = state[at];
+          }
+        }
+      }
+      return json;
+    },
+    BASE_fromJSON: function (json,state_hash_name) {
+      var using_state_hash = 'attr';
+      if (state_hash_name) {
+        using_state_hash = state_hash_name;
+      }
+      this[using_state_hash] = JSON.parse(json);
+     for (var at in this[using_state_hash]) {
+        if (this[using_state_hash].hasOwnProperty(at)) {
+          if (this[using_state_hash][at] instanceof Object && 'fromJSON' in this[using_state_hash][at]) {
+            this[using_state_hash][at].fromJSON(json[at]);
+          } else {
+            this[using_state_hash][at] = json[at];
+          }
+        }
+      }
+    }
 };

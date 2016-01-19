@@ -11,7 +11,6 @@ window.onload = function() {
         document.getElementById('wsrl-main-display').appendChild(   Game.getDisplay('main').getContainer());
         document.getElementById('wsrl-avatar-display').appendChild(   Game.getDisplay('avatar').getContainer());
         document.getElementById('wsrl-message-display').appendChild(   Game.getDisplay('message').getContainer());
-        Game.Message.sendMessage("Helloooo");
         Game.switchUIMode(Game.UIMode.gameStart);
     }
 };
@@ -98,7 +97,7 @@ var Game = {
     }
   },
   toJSON: function() {
-    var json = {"_randomSeed":this._randomSeed};
+    var json = {"_randomSeed":this._randomSeed, "ALL_ENTITIES": Game.ALL_ENTITIES};
     return json;
   }
 };

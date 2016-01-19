@@ -1,14 +1,18 @@
 Game.Message={
-  _curMessage: '',
+  _messages: [" "," "," "," "," "," "],
   renderOn: function(display) {
     display.clear();
-    display.drawText(0,0,this._curMessage);
+    for (var y = 0; y < 6; y++){
+      display.drawText(1, y, this._messages[y]);
+    }
   },
-  sendMessage: function(msg) {
-    this._curMessage = msg;
+  pushMessage: function(mes){
+    this._messages.shift();
+    this._messages.push(mes);
     Game.renderMessage();
   },
   clearMessage: function() {
-    this._curMessage = '';
+    this._messages = [" "," "," "," "," "," "];
+    Game.renderMessage();
   }
 };

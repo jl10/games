@@ -14,6 +14,6 @@ Game.Tile.prototype.isWalkable = function () {
   return this.attr._walkable;
 };
 
-Game.Tile.nullTile = new Game.Tile({name:'nullTile'});
+Game.Tile.nullTile = new Game.Tile({name:'nullTile',walkable:false});
 Game.Tile.floorTile = new Game.Tile({name:'floor',chr:' ',walkable:true});
-Game.Tile.wallTile = new Game.Tile({name:'wall',chr:'\u2588'});
+Game.Tile.wallTile = new Game.Tile({name:'wall',chr:'\u2588',walkable:false});
