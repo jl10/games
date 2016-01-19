@@ -49,7 +49,7 @@ Game.UIMode.gamePlay = {
     console.log("handleInput");
     if (evt.keyCode==80){
       console.log("Switch to persistence");
-      Game.switchUIMode(Game. xUIMode.gamePersistence);
+      Game.switchUIMode(Game.UIMode.gamePersistence);
     } else if (evt.keyCode==38){
       console.log("Move up");
       this.moveAvatar(0, -1);
