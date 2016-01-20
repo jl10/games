@@ -21,7 +21,7 @@ Game.Map = function (tilesGrid) {
    return this.attr._tiles[x][y] || Game.Tile.nullTile;
  };
 Game.Map.prototype.renderOn = function (display,camX,camY) {
-  console.log("Map renderOn");
+  console.log("Map renderOn " + camX + " " + camY);
   var dispW = display._options.width;
   var dispH = display._options.height;
   var xStart = camX-Math.round(dispW/2);
@@ -29,6 +29,7 @@ Game.Map.prototype.renderOn = function (display,camX,camY) {
   for (var x = 0; x < dispW; x++) {
     for (var y = 0; y < dispH; y++) {
        // Fetch the glyph for the tile and render it to the screen - sub in wall tiles for nullTiles / out-of-bounds
+      // console.log("" + x + xStart + y + yStart);
        var tile = this.getTile(x+xStart, y+yStart);
        if (tile.getName() == 'nullTile') {
          tile = Game.Tile.wallTile;

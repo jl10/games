@@ -35,8 +35,6 @@ var Game = {
   },
   _game: null,
   _curUIMode: null,
-  _randomSeed: 0,
-  _PERSISTANCE_NAMESPACE: 'wsrlgame',
   init: function(){
     console.log("test");
     for (var displayName in this.DISPLAYS){
@@ -85,19 +83,15 @@ var Game = {
     this.renderAll();
   },
   getRandomSeed: function(){
-    return this._randomSeed;
+    return Game.Data._randomSeed;
   },
   setRandomSeed: function(s){
-    this._randomSeed = s;
-    ROT.RNG.setSeed(this._randomSeed);
+    Game.Data._randomSeed = s;
+    ROT.RNG.setSeed(Game.Data._randomSeed);
   },
   eventHandler: function(eventType, evt){
       if(this._curUIMode !== null && this._curUIMode.hasOwnProperty('handleInput')){
       this._curUIMode.handleInput(eventType, evt);
     }
   },
-  toJSON: function() {
-    var json = {"_randomSeed":this._randomSeed, "ALL_ENTITIES": Game.ALL_ENTITIES};
-    return json;
-  }
 };

@@ -2,16 +2,17 @@ Game.Entity = function(template) {
     template = template || {};
     Game.Symbol.call(this, template);
     if (! ('attr' in this)) { this.attr = {}; }
-    this.attr._name = template.name || '';
-    this.attr._x = template.x || 0;
-    this.attr._y = template.y || 0;
 
-    this._entityID = Game.util.randomString(32);
-    Game.ALL_ENTITIES[this._entityID] = this;
+    this.attr._name = template._name || '';
+    this.attr._x = template._x || 0;
+    this.attr._y = template._y || 0;
+
+    this._entityID = template._entityID||Game.util.randomString(32);
+    Game.Data.ALL_ENTITIES[this._entityID] = this;
 
     // mixin sutff
     // track mixins and groups, copy over non-META properties, and run the mixin init if it exists
-    this._mixins = template.mixins || [];
+    this._mixins = template._mixins || [];
     this._mixinTracker = {};
     /*console.dir(template);
     console.dir(template.mixins);
@@ -75,25 +76,4 @@ Game.Entity.prototype.setY = function(y) {
 };
 Game.Entity.prototype.getY   = function() {
     return this.attr._y;
-};
-Game.Entity.prototype.toJSON = function () {
-
-  var json = Game.UIMode.gamePersistence.BASE_toJSON.call(this);
-  // for (var i = 0; i < this._mixins; i++) {
-  //   var mixin = this._mixins[i];
-  //   if (mixin.META.toJSON) {
-  //     json['mixin:'+mixin.META.mixinName] = mixin.META.toJSON.call(this);
-  //   }
-  // }
-  return json;
-};
-
-Game.Entity.prototype.fromJSON = function (json) {
-  Game.UIMode.gamePersistence.BASE_fromJSON.call(this,json);
-  // for (var i = 0; i < this._mixins; i++) {
-  //   var mixin = this._mixins[i];
-  //   if (mixin.META.fromJSON) {
-  //     mixin.META.fromJSON.call(this,json['mixin:'+mixin.META.mixinName]);
-  //   }
-  // }
 };

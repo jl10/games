@@ -16,8 +16,8 @@ Game.EntityMixin.WalkerCorporeal = {
       if (this.hasMixin('Chronicle')) { // NOTE: this is sub-optimal because it couple this mixin to the Chronicle one (i.e. this needs to know the Chronicle function to call) - the event system will solve this issue
         this.trackTurn();
       }
-      for (var entID in Game.ALL_ENTITIES){
-        if (targetX == Game.ALL_ENTITIES[entID].getX() && targetY == Game.ALL_ENTITIES[entID].getY()){
+      for (var entID in Game.Data.ALL_ENTITIES){
+        if (targetX == Game.Data.ALL_ENTITIES[entID].getX() && targetY == Game.Data.ALL_ENTITIES[entID].getY()){
             this.combat(entID);
             return false; //entity in the way
         }
@@ -29,7 +29,7 @@ Game.EntityMixin.WalkerCorporeal = {
   combat: function(entID){
     console.log("ENT ID:  " + entID);
     var avatarAttack = 1;
-    Game.ALL_ENTITIES[entID].takeHits(avatarAttack);
+    Game.Data.ALL_ENTITIES[entID].takeHits(avatarAttack);
     Game.Message.pushMessage("You hit moss.");
   }
 };
@@ -83,7 +83,7 @@ Game.EntityMixin.HitPoints = {
   takeHits: function (amt) {
     this.attr._HitPoints_attr.curHp -= amt;
     if(this.getCurHp() <= 0){
-      delete Game.ALL_ENTITIES[this._entityID];
+      delete Game.Data.ALL_ENTITIES[this._entityID];
     }
   },
   recoverHits: function (amt) {

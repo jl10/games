@@ -29,12 +29,12 @@ Game.UIMode.gameStart = {
 Game.UIMode.gamePlay = {
   attr: {
     _map: null,
-    _mapWidth: 300,
-    _mapHeight: 200,
+    _mapWidth: 50,
+    _mapHeight: 50,
     _cameraX: 100,
     _cameraY: 100,
     _avatar: null,
-    _numEnts: 200,
+    _numEnts: 400,
   },
   enter: function(){
     console.log("enter Play");
@@ -74,9 +74,9 @@ Game.UIMode.gamePlay = {
   renderEntities: function (display) {
     Game.Symbol.AVATAR.draw(display,this.attr._avatar.getX()-this.attr._cameraX+display._options.width/2,
                                     this.attr._avatar.getY()-this.attr._cameraY+display._options.height/2);
-    for (var entID in Game.ALL_ENTITIES){
-      Game.ALL_ENTITIES[entID].draw(display, Game.ALL_ENTITIES[entID].getX()-this.attr._cameraX+display._options.width/2,
-                                      Game.ALL_ENTITIES[entID].getY()-this.attr._cameraY+display._options.height/2);
+    for (var entID in Game.Data.ALL_ENTITIES){
+      Game.Data.ALL_ENTITIES[entID].draw(display, Game.Data.ALL_ENTITIES[entID].getX()-this.attr._cameraX+display._options.width/2,
+                                      Game.Data.ALL_ENTITIES[entID].getY()-this.attr._cameraY+display._options.height/2);
     }
   },
   moveAvatar: function (dx, dy) {
@@ -95,6 +95,7 @@ Game.UIMode.gamePlay = {
     this.setCamera(this.attr._cameraX + dx,this.attr._cameraY + dy);
   },
   setCamera: function (sx,sy) {
+    console.log(sx + " " + sy);
     this.attr._cameraX = Math.min(Math.max(0,sx),this.attr._mapWidth);
     this.attr._cameraY = Math.min(Math.max(0,sy),this.attr._mapHeight);
     Game.renderAll();
@@ -127,16 +128,32 @@ Game.UIMode.gamePlay = {
    //this.renderOnMain(Game.DISPLAYS.main.o);
    //   Game.renderMain();
 
-   //create avatar
-   this.attr._avatar = new Game.Entity(Game.EntityTemplates.Avatar);
-
     // restore anything else if the data is available
-    if (restorationData !== undefined && restorationData.hasOwnProperty(Game.UIMode.gamePlay.JSON_KEY)) {
-      this.fromJSON(restorationData[Game.UIMode.gamePlay.JSON_KEY]);
+    if (restorationData !== undefined) {
       //RESTORE POSITIONS
-      console.log("LOAD STUFF");
+      console.log("LOAD STUFF")
+      Game.Data.ALL_ENTITIES = {};
+      for (var obj in restorationData.ALL_ENTITIES){
+        Game.Data.ALL_ENTITIES[obj] = new Game.Entity({
+          _name: restorationData.ALL_ENTITIES[obj].attr._name,
+          _chr: restorationData.ALL_ENTITIES[obj].attr._chr,
+          _fg: restorationData.ALL_ENTITIES[obj].attr._fg,
+          _x: restorationData.ALL_ENTITIES[obj].attr._x,
+          _y: restorationData.ALL_ENTITIES[obj].attr._y,
+          _maxHp: restorationData.ALL_ENTITIES[obj].attr._HitPoints_attr.curHp,
+          _mixins: restorationData.ALL_ENTITIES[obj]._mixins,
+        });
+
+        if (restorationData.ALL_ENTITIES[obj].attr._name == 'avatar'){
+          this.attr._avatar = Game.Data.ALL_ENTITIES[obj];
+          this.attr._avatar.setPos({_x: Game.Data.ALL_ENTITIES[obj].attr._x, _y: Game.Data.ALL_ENTITIES[obj].attr._y});
+        }
+      }
+
     } else {
       console.log("DONT LOAD STUFF");
+      //create avatar
+      this.attr._avatar = new Game.Entity(Game.EntityTemplates.Avatar);
       this.attr._avatar.setPos(this.attr._map.getRandomWalkableLocation());
       for (var ecount = 0; ecount < this.attr._numEnts; ecount++) {
          var temp_entity = new Game.Entity(Game.EntityTemplates.Monster);
@@ -146,14 +163,6 @@ Game.UIMode.gamePlay = {
 
     this.setCameraToAvatar();
   },
-
- toJSON: function() {
-   return Game.UIMode.gamePersistence.BASE_toJSON.call(this);
- },
- fromJSON: function (json) {
-   Game.UIMode.gamePersistence.BASE_fromJSON.call(this,json);
- },
-
 };
 
 Game.UIMode.gameLose = {
@@ -215,14 +224,16 @@ Game.UIMode.gamePersistence = {
   },
   restoreGame: function() {
     if (this.localStorageAvailable()) {
-      console.log("Restore game");
-       var json_state_data = window.localStorage.getItem(Game._PERSISTANCE_NAMESPACE);
+       console.log("Restore game");
+       var json_state_data = window.localStorage.getItem(Game.Data._PERSISTANCE_NAMESPACE);
        var state_data = JSON.parse(json_state_data);
-
+       console.log(state_data);
        //RESTORE VARIABLES
        //Game._game = state_data;
        Game.setRandomSeed(state_data._randomSeed);
-       Game.ALL_ENTITIES = state_data.ALL_ENTITIES;
+       /*Game.Data.ALL_ENTITIES = state_data.ALL_ENTITIES;
+       Game.Data = state_data;
+       console.log(state_data);*/
        Game.UIMode.gamePlay.setupPlay(state_data);
 
 
@@ -233,8 +244,8 @@ Game.UIMode.gamePersistence = {
     if (this.localStorageAvailable()) {
     console.log("Save game");
     //Game.DATASTORE._game = Game._game;
-   //  Game.DATASTORE.ALL_ENTITIES = Game.ALL_ENTITIES;
-     window.localStorage.setItem(Game._PERSISTANCE_NAMESPACE, JSON.stringify(Game._game)); // .toJSON()
+   //  Game.DATASTORE.ALL_ENTITIES = Game.Data.ALL_ENTITIES;
+     window.localStorage.setItem(Game.Data._PERSISTANCE_NAMESPACE, JSON.stringify(Game.Data)); // .toJSON()
      Game.DISPLAYS.message.o.drawText(0, 0, "Game saved.");
      console.log(Game.getRandomSeed());
    }
@@ -246,7 +257,7 @@ Game.UIMode.gamePersistence = {
     Game.switchUIMode(Game.UIMode.gamePlay);
   },
   clear: function() {
-    Game.ALL_ENTITIES={};
+    Game.Data.ALL_ENTITIES={};
   },
   localStorageAvailable: function () { // NOTE: see https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
   	try {
@@ -260,37 +271,5 @@ Game.UIMode.gamePersistence = {
   		return false;
   	}
   },
-  BASE_toJSON: function(state_hash_name) {
-      var state = this.attr;
-      if (state_hash_name) {
-        state = this[state_hash_name];
-      }
-      var json = JSON.stringify(state);
-      for (var at in state) {
-        if (state.hasOwnProperty(at)) {
-          if (state[at] instanceof Object && 'toJSON' in state[at]) {
-            json[at] = state[at].toJSON();
-          } else {
-            json[at] = state[at];
-          }
-        }
-      }
-      return json;
-    },
-    BASE_fromJSON: function (json,state_hash_name) {
-      var using_state_hash = 'attr';
-      if (state_hash_name) {
-        using_state_hash = state_hash_name;
-      }
-      this[using_state_hash] = JSON.parse(json);
-     for (var at in this[using_state_hash]) {
-        if (this[using_state_hash].hasOwnProperty(at)) {
-          if (this[using_state_hash][at] instanceof Object && 'fromJSON' in this[using_state_hash][at]) {
-            this[using_state_hash][at].fromJSON(json[at]);
-          } else {
-            this[using_state_hash][at] = json[at];
-          }
-        }
-      }
-    }
+
 };

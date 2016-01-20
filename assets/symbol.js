@@ -1,13 +1,13 @@
 Game.Symbol = function (template) {
    this.attr = {
-       _char: template.chr || '?',
-       _fg: template.fg||Game.UIMode.DEFAULT_COLOR_FG,
-       _bg: template.bg||Game.UIMode.DEFAULT_COLOR_BG
+       _chr: template._chr || '?',
+       _fg: template._fg||Game.UIMode.DEFAULT_COLOR_FG,
+       _bg: template._bg||Game.UIMode.DEFAULT_COLOR_BG
      };
  };
 
- Game.Symbol.prototype.getChar = function () {
-   return this.attr._char;
+ Game.Symbol.prototype.getChr = function () {
+   return this.attr._chr;
  };
 
  Game.Symbol.prototype.getFg = function () {
@@ -19,7 +19,7 @@ Game.Symbol = function (template) {
  };
 
  Game.Symbol.prototype.draw = function (display,disp_x,disp_y) {
-   display.draw(disp_x,disp_y,this.attr._char, this.attr._fg, this.attr._bg);
+   display.draw(disp_x,disp_y,this.attr._chr, this.attr._fg, this.attr._bg);
  };
 
  Game.Symbol.NULL_SYMBOL = new Game.Symbol({});
