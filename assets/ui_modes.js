@@ -29,8 +29,8 @@ Game.UIMode.gameStart = {
 Game.UIMode.gamePlay = {
   attr: {
     _map: null,
-    _mapWidth: 50,
-    _mapHeight: 50,
+    _mapWidth: 100,
+    _mapHeight: 100,
     _cameraX: 100,
     _cameraY: 100,
     _avatar: null,
@@ -46,22 +46,16 @@ Game.UIMode.gamePlay = {
     console.log("exit");
   },
   handleInput: function(eventType, evt){
-    console.log("handleInput");
     if (evt.keyCode==80){
       console.log("Switch to persistence");
       Game.switchUIMode(Game.UIMode.gamePersistence);
-      Game.Message.pushMessage("Woppdedoo");
     } else if (evt.keyCode==38){
-      console.log("Move up");
       this.moveAvatar(0, -1);
     } else if (evt.keyCode==40){
-      console.log("Move down");
       this.moveAvatar(0, 1);
     } else if (evt.keyCode==37){
-      console.log("Move left");
       this.moveAvatar(-1, 0);
     } else if (evt.keyCode==39){
-      console.log("Move right");
       this.moveAvatar(1, 0);
     }
   },
@@ -151,13 +145,20 @@ Game.UIMode.gamePlay = {
       }
 
     } else {
-      console.log("DONT LOAD STUFF");
+      console.log("CREATE NEW STUFF");
       //create avatar
       this.attr._avatar = new Game.Entity(Game.EntityTemplates.Avatar);
       this.attr._avatar.setPos(this.attr._map.getRandomWalkableLocation());
-      for (var ecount = 0; ecount < this.attr._numEnts; ecount++) {
+
+
+      for (var ecount = 0; ecount < 100; ecount++) {
          var temp_entity = new Game.Entity(Game.EntityTemplates.Monster);
-         temp_entity.setPos(this.attr._map.getRandomWalkableLocation());
+         temp_entity.setPos(this.attr._map.getRandomReachableLocation());
+
+         for (var ent in Game.Data.ALL_ENTITIES){
+           if (ent!= temp_entity._entityID && Game.Data.ALL_ENTITIES[ent].getX() == temp_entity.getX() && Game.Data.ALL_ENTITIES[ent].getY() == temp_entity.getY())
+            delete Game.Data.ALL_ENTITIES[temp_entity._entityID];
+         }
      }
     }
 

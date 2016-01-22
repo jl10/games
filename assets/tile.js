@@ -12,6 +12,7 @@ Game.Tile.prototype.getName = function () {
 };
 Game.Tile.prototype.isWalkable = function () {
   return this.attr._walkable;
+
 };
 
 Game.Tile.nullTile = new Game.Tile({name:'nullTile',walkable:false});

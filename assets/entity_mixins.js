@@ -29,8 +29,8 @@ Game.EntityMixin.WalkerCorporeal = {
   combat: function(entID){
     console.log("ENT ID:  " + entID);
     var avatarAttack = 1;
+    Game.Message.pushMessage("You hit the moss for " + avatarAttack + " point.");
     Game.Data.ALL_ENTITIES[entID].takeHits(avatarAttack);
-    Game.Message.pushMessage("You hit moss.");
   }
 };
 
@@ -83,6 +83,7 @@ Game.EntityMixin.HitPoints = {
   takeHits: function (amt) {
     this.attr._HitPoints_attr.curHp -= amt;
     if(this.getCurHp() <= 0){
+      Game.Message.pushMessage("The moss dies.")
       delete Game.Data.ALL_ENTITIES[this._entityID];
     }
   },

@@ -2,7 +2,8 @@ Game.Map = function (tilesGrid) {
   this.attr = {
       _tiles: tilesGrid,
      _width: tilesGrid.length,
-     _height: tilesGrid[0].length
+     _height: tilesGrid[0].length,
+     _reachable: false
    };
  };
 
@@ -53,7 +54,26 @@ Game.Map.prototype.renderOn = function (display,camX,camY) {
 };
 
 Game.Map.prototype.getRandomWalkableLocation = function() {
-  return this.getRandomLocation(function(t){ return t.isWalkable(); });
+    return this.getRandomLocation(function(t){ return t.isWalkable(); });
+};
+
+Game.Map.prototype.getRandomReachableLocation = function() {
+  this.attr._reachable = false;
+  var loc;
+  while (!this.attr._reachable){
+    loc = this.getRandomLocation(function(t){ return t.isWalkable(); });
+    var dijkstra = new ROT.Path.Dijkstra(Game.UIMode.gamePlay.attr._avatar.getX(), Game.UIMode.gamePlay.attr._avatar.getY(), function(x, y){return (Game.UIMode.gamePlay.attr._map.getTile(x,y).isWalkable());});
+    dijkstra.compute(loc.x, loc.y, this.returnCallback);
+    //console.log( this._reachable);
+  }
+  return loc;
+
+  //return this.getRandomLocation(function(t){ return t.isWalkable(); });
+
+};
+
+Game.Map.prototype.returnCallback = function(x, y){
+  Game.UIMode.gamePlay.attr._map.attr._reachable = true;
 };
 
 Game.Map.prototype.addEntity = function(ent, pos) {
