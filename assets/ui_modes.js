@@ -35,6 +35,7 @@ Game.UIMode.gamePlay = {
     _cameraY: 100,
     _avatar: null,
     _numEnts: 400,
+    _timeout: null,
   },
   enter: function(){
     console.log("enter Play");
@@ -74,10 +75,22 @@ Game.UIMode.gamePlay = {
     }
   },
   moveAvatar: function (dx, dy) {
-    if (this.attr._avatar.tryWalk(this.attr._map,dx,dy)) {
-      this.attr._avatar.setX(this.attr._avatar.getX()+dx);
-      this.attr._avatar.setY(this.attr._avatar.getY()+dy);
-      this.setCameraToAvatar();
+    var d = new Date();
+    var curTime = d.getTime();
+    var timeSince = curTime - this.attr._timeout;
+    this.attr._timeout = curTime;
+
+    var timeout = timeSince > 3000;
+    if (timeout){
+      Game.Message.pushMessage("It took you " + timeSince + " ms to do something.  Slowpoke.");
+      Game.Message.pushMessage("You fell asleep, since you took so long.  It takes you a turn to wake from your slumber.")
+    } else {
+
+      if (this.attr._avatar.tryWalk(this.attr._map,dx,dy)) {
+        this.attr._avatar.setX(this.attr._avatar.getX()+dx);
+        this.attr._avatar.setY(this.attr._avatar.getY()+dy);
+        this.setCameraToAvatar();
+      }
     }
     this.moveEntities();
   },
@@ -122,13 +135,18 @@ Game.UIMode.gamePlay = {
    //this.renderOnMain(Game.DISPLAYS.main.o);
    //   Game.renderMain();
 
+   // Start timer
+   var d = new Date();
+   this.attr._timeout = d.getTime();
+
     // restore anything else if the data is available
     if (restorationData !== undefined) {
       //RESTORE POSITIONS
       console.log("LOAD STUFF")
       Game.Data.ALL_ENTITIES = {};
       for (var obj in restorationData.ALL_ENTITIES){
-        Game.Data.ALL_ENTITIES[obj] = new Game.Entity({
+        Game.Data.ALL_ENTITIES[obj] = new Game.Entity(restorationData.ALL_ENTITIES[obj]);
+        /*Game.Data.ALL_ENTITIES[obj] = new Game.Entity({
           _name: restorationData.ALL_ENTITIES[obj].attr._name,
           _chr: restorationData.ALL_ENTITIES[obj].attr._chr,
           _fg: restorationData.ALL_ENTITIES[obj].attr._fg,
@@ -136,7 +154,7 @@ Game.UIMode.gamePlay = {
           _y: restorationData.ALL_ENTITIES[obj].attr._y,
           _maxHp: restorationData.ALL_ENTITIES[obj].attr._HitPoints_attr.curHp,
           _mixins: restorationData.ALL_ENTITIES[obj]._mixins,
-        });
+        });*/
 
         if (restorationData.ALL_ENTITIES[obj].attr._name == 'avatar'){
           this.attr._avatar = Game.Data.ALL_ENTITIES[obj];
