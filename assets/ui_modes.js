@@ -22,8 +22,8 @@ Game.UIMode.gameStart = {
     }
   },
   renderOnMain: function(display){
-    Game.DISPLAYS.main.o.drawText(2, 2, "Game Start!");
-    Game.DISPLAYS.main.o.drawText(2, 3, "N for new game.  L to load.");
+    Game.DISPLAYS.main.o.drawText(2, 2, "You are Moss Def, a short-tempered computer science student and hip-hop mossician who one days wakes up in his brightly-lit outdoor music production dungeon to find himself in the midst of a hell beyond his wildest nightmares: his studio is entirely filled with various levels and forms of hostile moss.  These leafy greens are ruining your vibe, and you must make the mosst of your situation.  Use your musical prowess to get rid of them.");
+    Game.DISPLAYS.main.o.drawText(2, 16, "Depress the button that says 'N' to begin.");
   }
 };
 Game.UIMode.gamePlay = {
@@ -36,7 +36,7 @@ Game.UIMode.gamePlay = {
     _avatar: null,
     _numEnts: 400,
     _timeout: null,
-    _last5times: [1000,1000,1000,1000,1000],
+    _last10times: [1000,1000,1000,1000,1000, 1000, 1000, 1000, 1000, 1000,1000,1000,1000,1000,1000, 1000, 1000, 1000, 1000, 1000],
     _timeLastKill: 1388563404,
   },
   enter: function(){
@@ -47,6 +47,10 @@ Game.UIMode.gamePlay = {
   },
   exit: function(){
     console.log("exit");
+    document.getElementById("bass").load();
+    document.getElementById("drums").load();
+    document.getElementById("voice").load();
+    document.getElementById("guitar").load();
   },
   handleInput: function(eventType, evt){
     if (evt.keyCode==80){
@@ -97,6 +101,11 @@ Game.UIMode.gamePlay = {
       }
     }
     this.moveEntities();
+
+    if (this.attr._avatar.getCurHp <= 0){
+      console.log("Switch to LOSE");
+      Game.switchUIMode(Game.UIMode.gameLose);
+    }
   },
   moveEntities: function(){
 
@@ -202,27 +211,34 @@ Game.UIMode.gamePlay = {
   },
 
   updateVolumes: function(timeSince){
-    this.attr._last5times.shift();
-    this.attr._last5times.push(timeSince);
+    if (document.getElementById("bass").ended){
+      console.log("Switch to LOSE");
+      Game.switchUIMode(Game.UIMode.gameLose);
+    }
+
+    this.attr._last10times.shift();
+    this.attr._last10times.push(timeSince);
 
     var sum = 0;
-    for (var i = 0; i < 5; i++){
-      sum += this.attr._last5times[i];
+    for (var i = 0; i < 20; i++){
+      sum += this.attr._last10times[i];
     }
-    var avgTime = sum/5;
-
-    if (avgTime > 500) {
+    var avgTime = sum/20;
+    if (avgTime > 250) {
       document.getElementById("bass").volume = 1;
       document.getElementById("drums").volume = 0;
       document.getElementById("guitar").volume = 0;
-    } else if (avgTime > 250) {
+      console.log("BASS");
+    } else if (avgTime > 150) {
       document.getElementById("bass").volume = 1;
       document.getElementById("drums").volume = 1;
       document.getElementById("guitar").volume = 0;
+      console.log("DRUMS");
     } else {
       document.getElementById("bass").volume = 1;
       document.getElementById("drums").volume = 1;
       document.getElementById("guitar").volume = 1;
+      console.log(avgTime);
     }
 
     var d = new Date();
