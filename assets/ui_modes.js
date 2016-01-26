@@ -229,25 +229,25 @@ Game.UIMode.gamePlay = {
     if (avgTime > 250) {
       document.getElementById("bass").volume = 1;
       document.getElementById("drums").volume = 0;
-      document.getElementById("guitar").volume = 0;
+      document.getElementById("voice").volume = 0;
       console.log("BASS");
     } else if (avgTime > 150) {
       document.getElementById("bass").volume = 1;
       document.getElementById("drums").volume = 1;
-      document.getElementById("guitar").volume = 0;
+      document.getElementById("voice").volume = 0;
       console.log("DRUMS");
     } else {
       document.getElementById("bass").volume = 1;
       document.getElementById("drums").volume = 1;
-      document.getElementById("guitar").volume = 1;
+      document.getElementById("voice").volume = 1;
       console.log(avgTime);
     }
 
     var d = new Date();
     if (d.getTime() - this.attr._timeLastKill < 3000){
-      document.getElementById("voice").volume = 1;
+      document.getElementById("guitar").volume = 1;
     } else {
-      document.getElementById("voice").volume = 0;
+      document.getElementById("guitar").volume = 0;
     }
   }
 };
@@ -263,7 +263,9 @@ Game.UIMode.gameLose = {
     console.log("exit");
   },
   handleInput: function(eventType, evt){
-    console.log("handleInput");
+    if (evt.keyCode==78){
+      Game.UIMode.gamePersistence.newGame();
+    }
   },
   renderOnMain: function(display){
     console.log("renderOnMain");

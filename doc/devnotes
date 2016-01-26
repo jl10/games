@@ -1,5 +1,7 @@
 To Do:
 
+Speed up path tracing...find all reachable locs first, then generate entities on them
+
 Pause music on persistence
 
 # done # Death on 0 health
