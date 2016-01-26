@@ -64,6 +64,8 @@ Game.UIMode.gamePlay = {
       this.moveAvatar(-1, 0);
     } else if (evt.keyCode==39){
       this.moveAvatar(1, 0);
+    } else if (evt.keyCode==32){
+      this.moveAvatar(0, 0);
     }
   },
   renderOnMain: function(display){
