@@ -1,9 +1,13 @@
-ideas:
+To Do:
 
-modular music, adapts to gameplay
+Pause music on persistence
 
-Monster AI that adapts to state of player, environment (behave differently in groups)
+# done # Death on 0 health
 
-Incorporate stealth; monsters wont react if you move slowly.  Some timer to track time since last move
+Taking damage from monsters
 
-Levels;  after all or most moss of one level has been killed, spawn more harder moss.  Levels: normal moss, moss that runs away from you, moss that attacks you, and boss moss.
+Other music, other levels
+
+Basic AI:  avoidance, attack
+
+Remove persistence from this branch

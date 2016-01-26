@@ -252,7 +252,10 @@ Game.UIMode.gamePlay = {
 
 Game.UIMode.gameLose = {
   enter: function(){
-    console.log("enter");
+    console.log("enter lose");
+    Game.DISPLAYS.main.o.clear();
+    Game.DISPLAYS.main.o.drawText(2, 2, "You've exhausted all of your musical energy battling the viscious moss.  You're dead now...in spirit.");
+    Game.DISPLAYS.main.o.drawText(2, 6, "Press N to start a new game.");
   },
   exit: function(){
     console.log("exit");
