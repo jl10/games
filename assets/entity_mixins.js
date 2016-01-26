@@ -85,6 +85,8 @@ Game.EntityMixin.HitPoints = {
     if(this.getCurHp() <= 0){
       Game.Message.pushMessage("The moss dies.")
       delete Game.Data.ALL_ENTITIES[this._entityID];
+      var d = new Date();
+      Game.UIMode.gamePlay.attr._timeLastKill = d.getTime();
     }
   },
   recoverHits: function (amt) {
