@@ -18,10 +18,13 @@ Game.Entity = function(template) {
     console.dir(template.mixins);
     console.dir(this._mixins);*/
     for (var i = 0; i < this._mixins.length; i++) {
+
+    }
+    for (var i = 0; i < this._mixins.length; i++) {
       var mixin = this._mixins[i];
       //console.dir(mixin);
       this._mixinTracker[mixin.META.mixinName] = true;
-      this._mixinTracker[mixin.META.mixinGroup] = true;
+
       for (var mixinProp in mixinProp != 'META' && mixin) {
         if (mixinProp != 'META' && mixin.hasOwnProperty(mixinProp)) {
           this[mixinProp] = mixin[mixinProp];
