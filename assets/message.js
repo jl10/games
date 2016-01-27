@@ -45,6 +45,21 @@ Game.Message={
       "You win the game.  I hope this has made you happy!",
       "Congradulations, you've finally cleaned the moss out of the dungeon-studio.  You proceed to produce some mad mixtapes.",
       "The moss perishes, and the President of the United States awards you with a medal congradulating your achievements in this historic battle against the hostile moss lifeform.  You rejoice.",
+    ],
+    "hurt":[
+      "You were hit by moss.",
+      "You were hit by moss...LOL",
+      "Somehow, the moss manages to hurt you.",
+      "I can't believe you're getting hurt by moss.",
+      "The moss hits you.  At least it's not lichen."
+    ],
+    "hit":[
+      "You hit the moss.",
+      "You whack the moss hard.",
+      "You dope slap the moss.",
+      "You give the moss a stern talking-to.",
+      "The moss cowers in pain just from your stare.",
+      "You pulverize the moss between your thighs.",
       
     ]
 
