@@ -71,6 +71,8 @@ Game.UIMode.gamePlay = {
       Game.switchUIMode(Game.UIMode.gameLose);
     } else if (evt.keyCode==87){
       Game.switchUIMode(Game.UIMode.gameWin);
+    } else if (evt.keyCode==75){
+      this.killAll();
     }
   },
   renderOnMain: function(display){
@@ -320,6 +322,12 @@ temp_entity.setPos(loc);
   this.setCameraToAvatar();
   this.updateAvatar();
   if (level == 1) Game.switchUIMode(Game.UIMode.gamePlay);
+},
+killAll: function(){
+  for (var ent in Game.Data.ALL_ENTITIES){
+    if (Game.Data.ALL_ENTITIES[ent].getName()!="avatar") delete Game.Data.ALL_ENTITIES[ent];
+  }
+  this.moveAvatar(1, 0);
 },
 loadSongs: function(){
   if (this.attr._level == 1) {
