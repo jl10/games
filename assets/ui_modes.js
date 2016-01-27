@@ -317,9 +317,9 @@ temp_entity.setPos(loc);
 }
 }*/
 
-this.setCameraToAvatar();
-
-if (level == 1) Game.switchUIMode(Game.UIMode.gamePlay);
+  this.setCameraToAvatar();
+  this.updateAvatar();
+  if (level == 1) Game.switchUIMode(Game.UIMode.gamePlay);
 },
 loadSongs: function(){
   if (this.attr._level == 1) {
