@@ -1,8 +1,8 @@
 To Do:
 
-Speed up path tracing...find all reachable locs first, then generate entities on them
+# failed # Speed up path tracing...find all reachable locs first, then generate entities on them (DIDNT WORK LOL DIRT SLOW)
 
-Pause music on persistence
+# done # Pause music on persistence
 
 # done # Death on 0 health
 
@@ -12,6 +12,10 @@ Other music, other levels
 
 Basic AI:  avoidance, attack
 
-Remove persistence from this branch
+Avatar display
 
-Spacebar to wait
+# done # Remove persistence from this branch
+
+# done # Spacebar to wait
+
+# done # Dynamic messaging
