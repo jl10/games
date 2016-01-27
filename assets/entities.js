@@ -3,8 +3,8 @@ Game.EntityTemplates = {};
 Game.EntityTemplates.Avatar = {
   _name: 'avatar',
   _chr:'@',
-  _fg:'#ddd',
-  _maxHp: 100,
+  _fg:'#f00',
+  _maxHp: 20,
   _mixins: [Game.EntityMixin.WalkerCorporeal,Game.EntityMixin.HitPoints,Game.EntityMixin.Chronicle]
 };
 

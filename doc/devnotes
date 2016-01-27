@@ -1,9 +1,21 @@
-ideas:
+To Do:
 
-modular music, adapts to gameplay
+# failed # Speed up path tracing...find all reachable locs first, then generate entities on them (DIDNT WORK LOL DIRT SLOW)
 
-Monster AI that adapts to state of player, environment (behave differently in groups)
+# done # Pause music on persistence
 
-Incorporate stealth; monsters wont react if you move slowly.  Some timer to track time since last move
+# done # Death on 0 health
 
-Levels;  after all or most moss of one level has been killed, spawn more harder moss.  Levels: normal moss, moss that runs away from you, moss that attacks you, and boss moss.
+Taking damage from monsters
+
+Other music, other levels
+
+Basic AI:  avoidance, attack
+
+Avatar display
+
+# done # Remove persistence from this branch
+
+# done # Spacebar to wait
+
+# done # Dynamic messaging

@@ -70,9 +70,7 @@ var Game = {
       Game.Message.renderOn(this.DISPLAYS.message.o);
   },
   renderAvatar: function(){
-      for (var i = 0; i < 400; i++){
-        this.DISPLAYS.avatar.o.drawText(2, 5, "Woot");
-      }
+      
     },
   switchUIMode: function(newMode){
     if (this._curUIMode !== null){
@@ -90,8 +88,9 @@ var Game = {
     ROT.RNG.setSeed(Game.Data._randomSeed);
   },
   eventHandler: function(eventType, evt){
-      if(this._curUIMode !== null && this._curUIMode.hasOwnProperty('handleInput')){
+      if(this._curUIMode !== null && this._curUIMode.hasOwnProperty('handleInput') && evt.type=="keydown"){
       this._curUIMode.handleInput(eventType, evt);
+      //console.log(evt);
     }
   },
 };
