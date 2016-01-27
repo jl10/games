@@ -32,7 +32,8 @@ Game.EntityMixin.WalkerCorporeal = {
   combat: function(entID){
     console.log("ENT:  " + Game.Data.ALL_ENTITIES[entID].getName());
     var avatarAttack = 1;
-    Game.Message.pushMessage("You hit the moss.");
+    if (this.getName()=="avatar") Game.Message.messageGenie("hit");
+    
     Game.Data.ALL_ENTITIES[entID].takeHits(avatarAttack);
 
     var d = new Date();

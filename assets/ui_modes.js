@@ -120,6 +120,8 @@ Game.UIMode.gamePlay = {
 
     if (this.attr._avatar.getX() != oldPos.x || this.attr._avatar.getY() != oldPos.y){
       this.attr._avatar.setCurHp(oldHp);
+    } else if (this.attr._avatar.getCurHp() < oldHp){
+      Game.Message.messageGenie("hurt");
     }
     this.updateAvatar();
 
