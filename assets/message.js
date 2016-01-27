@@ -60,7 +60,7 @@ Game.Message={
       "You give the moss a stern talking-to.",
       "The moss cowers in pain just from your stare.",
       "You pulverize the moss between your thighs.",
-      
+
     ]
 
   },
