@@ -3,7 +3,8 @@ Game.Map = function (tilesGrid) {
       _tiles: tilesGrid,
      _width: tilesGrid.length,
      _height: tilesGrid[0].length,
-     _reachable: false
+     _reachable: false,
+     _reachables: []
    };
  };
 
@@ -19,6 +20,7 @@ Game.Map = function (tilesGrid) {
    if ((x < 0) || (x >= this.attr._width) || (y<0) || (y >= this.attr._height)) {
      return Game.Tile.nullTile;
    }
+   //console.log("" + x + " " + y);
    return this.attr._tiles[x][y] || Game.Tile.nullTile;
  };
 Game.Map.prototype.renderOn = function (display,camX,camY) {
@@ -62,9 +64,8 @@ Game.Map.prototype.getRandomReachableLocation = function() {
   var loc;
   while (!this.attr._reachable){
     loc = this.getRandomLocation(function(t){ return t.isWalkable(); });
-    var dijkstra = new ROT.Path.Dijkstra(Game.UIMode.gamePlay.attr._avatar.getX(), Game.UIMode.gamePlay.attr._avatar.getY(), function(x, y){return (Game.UIMode.gamePlay.attr._map.getTile(x,y).isWalkable());});
+    var dijkstra = new ROT.Path.Dijkstra(Game.UIMode.gamePlay.attr._avatar.getX(), Game.UIMode.gamePlay.attr._avatar.getY(), function(x, y){return (Game.UIMode.gamePlay.attr._map.getTile(x,y).isWalkable());}, {topology: 4});
     dijkstra.compute(loc.x, loc.y, this.returnCallback);
-    //console.log( this._reachable);
   }
   return loc;
 

@@ -10,7 +10,7 @@ Game.EntityMixin.WalkerCorporeal = {
   tryWalk: function (map,dx,dy) {
     var targetX = Math.min(Math.max(0,this.getX() + dx),map.getWidth());
     var targetY = Math.min(Math.max(0,this.getY() + dy),map.getHeight());
-    console.log(map.getTile(targetX,targetY).attr._name);
+
     if (map.getTile(targetX,targetY).isWalkable()) {
 
       if (this.hasMixin('Chronicle')) { // NOTE: this is sub-optimal because it couple this mixin to the Chronicle one (i.e. this needs to know the Chronicle function to call) - the event system will solve this issue
@@ -18,7 +18,10 @@ Game.EntityMixin.WalkerCorporeal = {
       }
       for (var entID in Game.Data.ALL_ENTITIES){
         if (targetX == Game.Data.ALL_ENTITIES[entID].getX() && targetY == Game.Data.ALL_ENTITIES[entID].getY()){
-            this.combat(entID);
+            if (Game.Data.ALL_ENTITIES[entID].getName() != this.getName()){
+              console.log("COMBAAAT");
+              this.combat(entID);
+            }
             return false; //entity in the way
         }
       }
@@ -27,10 +30,13 @@ Game.EntityMixin.WalkerCorporeal = {
     return false; //not walkable tile
   },
   combat: function(entID){
-    console.log("ENT ID:  " + entID);
+    console.log("ENT:  " + Game.Data.ALL_ENTITIES[entID].getName());
     var avatarAttack = 1;
-    Game.Message.pushMessage("You hit the moss for " + avatarAttack + " point.");
+    Game.Message.pushMessage("You hit the moss.");
     Game.Data.ALL_ENTITIES[entID].takeHits(avatarAttack);
+
+    var d = new Date();
+    Game.UIMode.gamePlay.attr._timeLastKill = d.getTime();
   }
 };
 
@@ -64,8 +70,9 @@ Game.EntityMixin.HitPoints = {
       curHp: 1
     },
     init: function (template) {
-      this.attr._HitPoints_attr.maxHp = template.maxHp || 1;
-      this.attr._HitPoints_attr.curHp = template.curHp || this.attr._HitPoints_attr.maxHp;
+      this.attr._HitPoints_attr.maxHp = template._maxHp || 1;
+      this.attr._HitPoints_attr.curHp = template._curHp || this.attr._HitPoints_attr.maxHp;
+      this.attr._HitPoints_attr.aware = false;
     }
   },
   getMaxHp: function () {
@@ -83,11 +90,15 @@ Game.EntityMixin.HitPoints = {
   takeHits: function (amt) {
     this.attr._HitPoints_attr.curHp -= amt;
     if(this.getCurHp() <= 0){
-      Game.Message.pushMessage("The moss dies.")
+      Game.Message.messageGenie("mossDeath");
       delete Game.Data.ALL_ENTITIES[this._entityID];
-      var d = new Date();
-      Game.UIMode.gamePlay.attr._timeLastKill = d.getTime();
     }
+  },
+  isAware: function(){
+    return this.attr._HitPoints_attr.aware;
+  },
+  makeAware: function(a){
+    this.attr._HitPoints_attr.aware = a;
   },
   recoverHits: function (amt) {
     this.attr._HitPoints_attr.curHp = Math.min(this.attr._HitPoints_attr.curHp+amt,this.attr._HitPoints_attr.maxHp);
